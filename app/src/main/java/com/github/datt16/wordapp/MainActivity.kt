@@ -8,16 +8,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.datt16.wordapp.ui.theme.WordAppTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -31,10 +35,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 const val TAG = "MainActivity"
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var signInRequest: BeginSignInRequest
@@ -61,6 +68,8 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
+            val viewModel: SharedViewModel = hiltViewModel()
+
             WordAppTheme {
                 Scaffold(
                     topBar = {
@@ -71,24 +80,11 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     content = {
-                        val email = remember {
-                            mutableStateOf("")
-                        }
 
                         Column() {
 
-                            Button(
-                                onClick = {
-                                    Log.d(
-                                        "DEBUG",
-                                        Firebase.auth.currentUser?.email.toString()
-                                    )
-                                }) {
-                                Text(text = "リロード")
-                            }
-
                             SignInSampleSection(
-                                email = "",
+                                email = viewModel.email,
                                 onSignInWithGoogleClicked = {
                                     oneTapClient.beginSignIn(signInRequest)
                                         .addOnSuccessListener { result ->
@@ -103,15 +99,6 @@ class MainActivity : ComponentActivity() {
                                                     0,
                                                     null
                                                 )
-                                                when {
-                                                    Firebase.auth.currentUser?.email.isNullOrEmpty() -> {
-                                                        email.value = ""
-                                                    }
-                                                    else -> {
-                                                        email.value =
-                                                            Firebase.auth.currentUser?.email!!
-                                                    }
-                                                }
                                             } catch (e: IntentSender.SendIntentException) {
                                                 Log.e(
                                                     TAG,
@@ -122,19 +109,13 @@ class MainActivity : ComponentActivity() {
                                             // No saved credentials found. Launch the One Tap sign-up flow, or
                                             // do nothing and continue presenting the signed-out UI.
                                             e.localizedMessage?.let { it1 -> Log.d(TAG, it1) }
-                                        }.addOnCompleteListener {
-                                            Log.d(
-                                                "DEBUG",
-                                                Firebase.auth.currentUser?.email.toString()
-                                            )
                                         }
-
                                 },
                                 onSignInWithEmailClicked = { },
                                 onSignInWithEmailLinkClicked = { },
                                 onSignOutClicked = {
-                                    Firebase.auth.signOut()
-                                    email.value = ""
+                                    viewModel.signOut()
+                                    
                                 }
                             )
                         }
@@ -144,17 +125,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        auth = FirebaseAuth.getInstance()
-        val currentUser = auth.currentUser
-        Log.d("auth", currentUser.toString())
-    }
-
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        val viewModel by viewModels<SharedViewModel>()
 
         when (requestCode) {
             REQ_ONE_TAP -> {
@@ -177,7 +153,10 @@ class MainActivity : ComponentActivity() {
                                     if (task.isSuccessful) {
                                         Log.d(TAG, "signInWithCredential:success")
                                         val user = auth.currentUser
-                                        Log.d("Firebase/auth", user?.uid.toString())
+
+                                        viewModel.signIn(mail = user?.email!!)
+
+
                                     } else {
                                         Log.w(
                                             TAG,
@@ -304,18 +283,5 @@ fun SignInSampleSection(
 
 }
 
-@Composable
-@Preview(showBackground = true)
-fun Preview() {
-    WordAppTheme {
-        SignInSampleSection(
-            email = "aaa@gmail.com",
-            onSignInWithEmailClicked = {},
-            onSignInWithEmailLinkClicked = {},
-            onSignOutClicked = {},
-            onSignInWithGoogleClicked = {}
-        )
-    }
-}
 
 
