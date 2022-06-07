@@ -1,4 +1,4 @@
-package com.github.datt16.wordapp.ui.screens.handson
+package com.github.datt16.wordapp.ui.screens.list
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -9,34 +9,34 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.github.datt16.wordapp.WordViewModel
 import com.github.datt16.wordapp.models.Word
 import com.github.datt16.wordapp.ui.components.WordCard
 
 @Composable
-fun HandsOnScreen1(
-    navigateToAddScreen: () -> Unit
+fun WordListScreen(
+    navigateToAddScreen: () -> Unit,
+    wordViewModel: WordViewModel
 ) {
-
-    val samples = listOf<Word>(
-        Word("Hello", "こんにちは", ""),
-        Word("See You", "さようなら", ""),
-        Word("Eat", "食べる", ""),
-        Word("Play", "弾く、遊ぶ、やる", ""),
-    )
+    val allWords by wordViewModel.allWords.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Test1")
+                    Text(
+                        text = "単語帳",
+                        style = MaterialTheme.typography.subtitle1
+                    )
                 }
             )
         },
         content = {
-            WordListDisplay(words = samples)
+            WordListDisplay(words = allWords)
         },
         floatingActionButton = {
             ListFab(
@@ -75,6 +75,5 @@ fun WordListDisplay(
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
-
     }
 }

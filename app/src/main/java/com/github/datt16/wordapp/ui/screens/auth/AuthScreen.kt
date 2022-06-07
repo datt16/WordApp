@@ -86,9 +86,13 @@ fun SignInSampleSection(
         }
 
         Row(Modifier.padding(horizontal = 16.dp)) {
-            Button(onClick = { onSignOutClicked() }) {
+
+
+            Button(onClick = { onSignOutClicked() }, enabled = email.isNotEmpty()) {
                 Text(text = "サインアウト")
             }
+
+
         }
 
 

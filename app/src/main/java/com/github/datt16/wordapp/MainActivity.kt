@@ -1,21 +1,11 @@
 package com.github.datt16.wordapp
 
 import android.content.Intent
-import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -62,13 +52,15 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-            val viewModel: SharedViewModel = hiltViewModel()
+            val sharedViewModel: SharedViewModel = hiltViewModel()
+            val wordViewModel: WordViewModel = hiltViewModel()
 
             WordAppTheme {
                 navController = rememberNavController()
                 SetupNavigation(
                     navController = navController,
-                    sharedViewModel = viewModel
+                    sharedViewModel = sharedViewModel,
+                    wordViewModel = wordViewModel
                 )
             }
         }

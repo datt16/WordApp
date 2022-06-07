@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.github.datt16.wordapp.SharedViewModel
+import com.github.datt16.wordapp.WordViewModel
 import com.github.datt16.wordapp.ui.navigation.destinations.wordListComposable
 import com.github.datt16.wordapp.ui.navigation.destinations.authComposable
 import com.github.datt16.wordapp.utils.Constants.WORD_LIST_SCREEN
@@ -12,7 +13,8 @@ import com.github.datt16.wordapp.utils.Constants.WORD_LIST_SCREEN
 @Composable
 fun SetupNavigation(
     navController: NavHostController,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    wordViewModel: WordViewModel
 ) {
     val screen = remember(navController) {
         Screens(navController)
@@ -21,7 +23,8 @@ fun SetupNavigation(
     NavHost(navController = navController, startDestination = WORD_LIST_SCREEN) {
 
         wordListComposable(
-            screen.auth
+            screen.auth,
+            wordViewModel
         )
 
         authComposable(

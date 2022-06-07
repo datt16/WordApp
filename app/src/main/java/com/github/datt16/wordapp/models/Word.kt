@@ -17,5 +17,5 @@ data class Word(
     /**
      * 単語の読み方
      */
-    val wordRead: String?
+    val wordRead: String = ""
 )
