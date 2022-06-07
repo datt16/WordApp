@@ -13,30 +13,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.github.datt16.wordapp.ui.navigation.SetupNavigation
 import com.github.datt16.wordapp.ui.theme.WordAppTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 const val TAG = "MainActivity"
@@ -49,12 +41,14 @@ class MainActivity : ComponentActivity() {
     private var showOneTapUI = true
     private lateinit var oneTapClient: SignInClient
     private lateinit var auth: FirebaseAuth
+    lateinit var navController: NavHostController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+
 
         oneTapClient = Identity.getSignInClient(this)
         signInRequest = BeginSignInRequest.builder()
@@ -71,55 +65,10 @@ class MainActivity : ComponentActivity() {
             val viewModel: SharedViewModel = hiltViewModel()
 
             WordAppTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(text = "SignUp")
-                            }
-                        )
-                    },
-                    content = {
-
-                        Column() {
-
-                            SignInSampleSection(
-                                email = viewModel.email,
-                                onSignInWithGoogleClicked = {
-                                    oneTapClient.beginSignIn(signInRequest)
-                                        .addOnSuccessListener { result ->
-                                            try {
-                                                Log.d("TAG", "Google-SignIn Started")
-                                                startIntentSenderForResult(
-                                                    result.pendingIntent.intentSender,
-                                                    REQ_ONE_TAP,
-                                                    null,
-                                                    0,
-                                                    0,
-                                                    0,
-                                                    null
-                                                )
-                                            } catch (e: IntentSender.SendIntentException) {
-                                                Log.e(
-                                                    TAG,
-                                                    "Couldn't start One Tap UI: ${e.localizedMessage}"
-                                                )
-                                            }
-                                        }.addOnFailureListener { e ->
-                                            // No saved credentials found. Launch the One Tap sign-up flow, or
-                                            // do nothing and continue presenting the signed-out UI.
-                                            e.localizedMessage?.let { it1 -> Log.d(TAG, it1) }
-                                        }
-                                },
-                                onSignInWithEmailClicked = { },
-                                onSignInWithEmailLinkClicked = { },
-                                onSignOutClicked = {
-                                    viewModel.signOut()
-                                    
-                                }
-                            )
-                        }
-                    }
+                navController = rememberNavController()
+                SetupNavigation(
+                    navController = navController,
+                    sharedViewModel = viewModel
                 )
             }
         }
@@ -191,97 +140,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun UserCard(email: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        elevation = 8.dp
-    ) {
-        Column(Modifier.padding(16.dp)) {
-
-            when {
-                email.isEmpty() -> {
-                    Text(text = "ログインしていません", style = MaterialTheme.typography.subtitle1)
-                    Text(text = "下記ボタンからログインしてください", style = MaterialTheme.typography.body2)
-                }
-                else -> {
-                    Text(text = "ログイン済み", style = MaterialTheme.typography.subtitle1)
-                    Text(text = email, style = MaterialTheme.typography.body2)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SignInSampleSection(
-    email: String,
-    onSignInWithGoogleClicked: () -> Unit,
-    onSignInWithEmailClicked: () -> Unit,
-    onSignInWithEmailLinkClicked: () -> Unit,
-    onSignOutClicked: () -> Unit
-) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colors.background)
-    ) {
-        Row {
-            UserCard(email)
-        }
-
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "サインイン",
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Divider(modifier = Modifier.fillMaxWidth())
-        }
-
-        Row(Modifier.padding(horizontal = 16.dp)) {
-            Button(
-                onClick = { onSignInWithGoogleClicked() }
-            ) {
-                Text(text = "Google")
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Button(onClick = { onSignInWithEmailLinkClicked() }) {
-                Text(text = "メールリンク")
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Button(onClick = { onSignInWithEmailClicked() }) {
-                Text(text = "メール")
-            }
-        }
-
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "サインアウト",
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Divider(modifier = Modifier.fillMaxWidth())
-        }
-
-        Row(Modifier.padding(horizontal = 16.dp)) {
-            Button(onClick = { onSignOutClicked() }) {
-                Text(text = "サインアウト")
-            }
-        }
+// TODO: Composableは別の要素にする
 
 
-    }
-
-}
 
 
 

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "514400673403",
+    "project_id": "words-f6f51",
+    "storage_bucket": "words-f6f51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514400673403:android:ba8d806a73b5b9de0c8cde",
+        "android_client_info": {
+          "package_name": "com.github.datt16.wordapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "514400673403-01ha54qng2c33pr9qdnd3d8i04elfiuf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.datt16.wordapp",
+            "certificate_hash": "041ada3664364ef2192e3814bf73289866b86604"
+          }
+        },
+        {
+          "client_id": "514400673403-199ivcqlguhka8l1p0mjkpms7ora7gmu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqIsPte5LNMjLxSTUBkieMuMVr-uWJE50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514400673403-199ivcqlguhka8l1p0mjkpms7ora7gmu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
