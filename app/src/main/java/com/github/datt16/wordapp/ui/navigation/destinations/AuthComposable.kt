@@ -4,12 +4,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.github.datt16.wordapp.SharedViewModel
 import com.github.datt16.wordapp.ui.screens.auth.AuthScreen
+import com.github.datt16.wordapp.utils.Constants.AUTH_SCREEN
 
-fun NavGraphBuilder.test2Composable(
+fun NavGraphBuilder.authComposable(
     sharedViewModel: SharedViewModel
 ) {
     composable(
-        route = "auth"
+        route = AUTH_SCREEN
     ) {
         AuthScreen(sharedViewModel = sharedViewModel)
     }

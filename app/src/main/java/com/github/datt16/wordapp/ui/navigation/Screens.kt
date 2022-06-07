@@ -1,14 +1,16 @@
 package com.github.datt16.wordapp.ui.navigation
 
 import androidx.navigation.NavController
+import com.github.datt16.wordapp.utils.Constants.AUTH_SCREEN
+import com.github.datt16.wordapp.utils.Constants.WORD_LIST_SCREEN
 
 class Screens(navController: NavController) {
-    val test1: () -> Unit = {
-        navController.navigate("test1")
+    val list: () -> Unit = {
+        navController.navigate(WORD_LIST_SCREEN)
     }
 
-    val test2: () -> Unit = {
-        navController.navigate("auth")
+    val auth: () -> Unit = {
+        navController.navigate(AUTH_SCREEN)
     }
 
 //    val listSample: (String) -> Unit = { id ->
@@ -19,4 +21,4 @@ class Screens(navController: NavController) {
 //            }
 //        }
 //    }
-    }
+}
