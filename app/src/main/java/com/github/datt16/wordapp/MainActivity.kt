@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.github.datt16.wordapp.firebase.getUserData
 import com.github.datt16.wordapp.ui.navigation.SetupNavigation
 import com.github.datt16.wordapp.ui.theme.WordAppTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -38,6 +39,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+
+        getUserData("123456789")
 
 
         oneTapClient = Identity.getSignInClient(this)
