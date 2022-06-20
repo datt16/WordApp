@@ -22,7 +22,7 @@ fun WordListScreen(
     navigateToAddScreen: () -> Unit,
     wordViewModel: WordViewModel
 ) {
-    val allWords by wordViewModel.allWords.collectAsState()
+   val allWords by wordViewModel.allWords.collectAsState()
 
     Scaffold(
         topBar = {
@@ -55,7 +55,7 @@ fun ListFab(onFabClicked: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
-            contentDescription = "単語を追加"
+            contentDescription = "追加"
         )
     }
 }
