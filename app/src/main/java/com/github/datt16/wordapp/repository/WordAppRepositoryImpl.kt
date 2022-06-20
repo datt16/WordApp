@@ -2,6 +2,7 @@ package com.github.datt16.wordapp.repository
 
 import com.github.datt16.wordapp.models.UserData
 import com.github.datt16.wordapp.models.Word
+import com.github.datt16.wordapp.utils.Resource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,10 +34,36 @@ class WordAppRepositoryImpl @Inject constructor() : WordAppRepository {
         )
     )
 
-    override fun getUserData(): Flow<UserData> {
-        return flow<UserData> {
-            // ここにリモートとローカルの切り分けを書く
-            sampleUserDataSet
+    override fun getUserData(): Flow<Resource<UserData>> {
+        return flow<Resource<UserData>> {
+            // ここにリモートとローカルの切り分け
+            emit(Resource.loading())
+            try {
+                // getUserData ... Firebase上のデータをとってくる
+
+                // サンプルデータを代入してる
+                emit(Resource.success(sampleUserDataSet))
+            } catch (exception: Exception) {
+                emit(Resource.error(exception.message))
+            }
+
+        }.flowOn(Dispatchers.IO)
+    }
+
+    override fun getPrivateWordList(): Flow<Resource<List<Word>>> {
+        return flow<Resource<List<Word>>> {
+
+            // ここにリモートとローカルの切り分け
+            emit(Resource.loading())
+            try {
+                // getUserData ... Firebase上のデータをとってくる
+
+                // サンプルデータを代入してる
+                emit(Resource.success(sampleUserDataSet.wordList.getValue("testList1")))
+            } catch (exception: Exception) {
+                emit(Resource.error(exception.message))
+            }
+
         }.flowOn(Dispatchers.IO)
     }
 }
