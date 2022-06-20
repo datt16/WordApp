@@ -15,7 +15,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-@ViewModelScoped
 class WordAppRepositoryImpl @Inject constructor() : WordAppRepository {
 
     private val sampleUserDataSet: UserData = UserData(
