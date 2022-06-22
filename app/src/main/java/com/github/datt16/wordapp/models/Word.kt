@@ -1,8 +1,11 @@
 package com.github.datt16.wordapp.models
 
-import androidx.navigation.NavGraph
+import com.google.firebase.firestore.DocumentId
 
 data class Word(
+    @DocumentId
+    val id: String = "",
+    val lang: String = "ja",
 
     /**
      * 単語の名前
